@@ -2,10 +2,10 @@
 #define MONITOR_H
 
 #include <cstring>
-#include<math.h>
-#include<stdlib.h>
-#include<signal.h>
-#include<unistd.h>
+#include <math.h>
+#include <stdlib.h>
+#include <signal.h>
+#include <unistd.h>
 
 #include "configfile.h"
 #include "common/log.h"

@@ -115,7 +115,7 @@ void CMonitor::SerialDataSlot(char *strBuf)
     DecodeSerialData(strBuf);
 }
 
-char* CMonitor::GetSystemTime()
+char* CMonitor::GetSystemTime()                  //获取系统当前的时间，以"yyyy-MM-dd hh:mm:ss"格式保存到m_strTime
 {
     QDateTime time = QDateTime::currentDateTime();
     m_strTime = time.toString("yyyy-MM-dd hh:mm:ss");
@@ -141,9 +141,9 @@ void CMonitor::GetLocalIP()
     }
 }
 
-void CMonitor::timerEvent(QTimerEvent *event)
+void CMonitor::timerEvent(QTimerEvent *event)   //事件处理器，接受定时器事件
 {
-    if(m_nTimerID == event->timerId())
+    if(m_nTimerID == event->timerId())          //构造一个定时器标识符为timerID的定时器事件对象
     {
         SendCMDToSerialPort();
     }
@@ -181,7 +181,7 @@ void CMonitor::timerEvent(QTimerEvent *event)
 
 }
 
-void CMonitor::SendCMDToSerialPort()
+void CMonitor::SendCMDToSerialPort()            //向串口发指令
 {
     char szCMD[CMD_LEN] = {0x1B, 0X10, 0X04, 0X00, 0X00, 0X06, 0X1F, 0X8F};
 

@@ -47,7 +47,7 @@ signals:
     void sSerialData(char *strBuf);            // serial port data singanls
 
 
-private:
+//private:
 //    void ReadUart();                // 串口接收函数
 
 private:
