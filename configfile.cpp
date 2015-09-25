@@ -25,6 +25,9 @@ void CCfgFile::ReadFile()
     m_strDev = m_setting->value("serialport/DEV").toString().trimmed();
     m_nBaud = m_setting->value("serialport/BAUD").toInt();
 
+    w_strDev = m_setting->value("serialport/DEV2").toString().trimmed();
+    w_nBaud = m_setting->value("serialport/BAUD2").toInt();
+
     m_strIP = m_setting->value("server/IP").toString().trimmed();
     m_nPort = m_setting->value("server/PORT").toInt();
 
@@ -71,6 +74,11 @@ void CCfgFile::VerifyData()
     if(0 == m_nBaud)
     {
         m_nBaud = 115200;
+    }
+
+    if(0 == w_nBaud)
+    {
+        m_nBaud = 9600;
     }
 
     if(0 == m_nSampTime)
@@ -147,6 +155,9 @@ void CCfgFile::SaveFile()
 
     m_setting->setValue("serialport/DEV", m_strDev);
     m_setting->setValue("serialport/BAUD", m_nBaud);
+
+    m_setting->setValue("serialport/DEV2", w_strDev);
+    m_setting->setValue("serialport/BAUD2", w_nBaud);
 
     m_setting->setValue("server/IP", m_strIP);
     m_setting->setValue("server/PORT", m_nPort);

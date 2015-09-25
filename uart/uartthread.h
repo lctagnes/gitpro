@@ -13,6 +13,8 @@
 
 
 #include "common/log.h"
+#include "common/sensor.h"
+#include "common/define.h"
 
 extern "C"
 {
@@ -39,6 +41,11 @@ public:
     void Start();
     void WriteUart( char *strBuf, int nLen);
     void ReadUart();                // 串口接收函数
+    void wReadUart();               //安卓通信串口接受函数
+    void writeSerial(struCseSensor *wstrbuf);           //安卓串口通信写函数
+
+private slots:
+     void writeSerialSlot(struCseSensor *wstrBuf);
 
 protected:
     void run();
@@ -53,6 +60,7 @@ signals:
 private:
     bool m_bRun;                // 线程开始停止标志位
     int m_nFD;
+    int wFD;
     //int m_i;                   //for test
 };
 

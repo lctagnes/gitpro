@@ -6,6 +6,7 @@
  ************************************************************/
 
 #include "uart.h"
+#include "common/define.h"
  int openport(char *strDev)
 {
 
@@ -155,6 +156,24 @@
 }
 
  int writeport(int fd, char *buf, int len)  //发送数据
+{
+    int wrnum = 0;
+
+    wrnum = write(fd, buf, len);
+
+    if(wrnum == len)
+    {
+        return wrnum;
+
+    }
+    else
+    {
+        return -1;
+    }
+
+}
+
+ int wwriteport(int fd, struCseSensor *buf, int len)  //发送数据
 {
     int wrnum = 0;
 

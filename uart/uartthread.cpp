@@ -152,11 +152,62 @@ void CUartThread::ReadUart()
     }
 }
 
+void CUartThread::wReadUart()
+{
+    int wLen = 0;
+    char wszBuf[8] = {0};
+
+    wLen = readport(wFD, wszBuf, 8);
+    if(wLen < 0)
+    {
+        CLOG::Log("Read w cmd error .");
+        return;
+    }
+    if((wszBuf[0] == 'O') && (wszBuf[1] == 'K'))
+    {
+
+        connect(CMonitor, SIGNAL(writeSerial(struCseSensor *)), this, SLOT(writeSerialSlot(char *)));
+
+        if(wLen <= 0)
+        {
+            //printf("nLen <= 0,Read sensor data error .\r\n");
+            CLOG::Log("Read sensor data error .");
+            return;
+        }
+
+//        for(int i = 0; i < nLen; i++)
+//        {
+//            printf("%x\r\n", *(szBuf + i));
+//        }
+
+        printf("Read uart data success  \r\n");
+        CLOG::Log("Read uart data success .");
+
+         //put a signals that recv data from serial port
+    }
+
+    if((wszBuf[0] == 'E') && (wszBuf[1] == 'R'))
+    {
+        wLen = readport(wFD, wszBuf, 2);
+        //printf("recv data error  \r\n");
+    }
+}
+
 void CUartThread::WriteUart( char *strBuf, int nLen)
 {
 
     writeport(m_nFD, strBuf, nLen);
 }
 
+void CUartThread::writeSerial(struCseSensor *wstrbuf)
+{
+    CLOG::Log("writeSerial .");
 
+    wwriteport(wFD, wstrbuf, sizeof(struCseSensor));
+}
+void CUartThread::writeSerialSlot(struCseSensor *wstrBuf)
+{
+    CLOG::Log("writeSerial .");
 
+    writeSerial(wstrBuf);
+}

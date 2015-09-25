@@ -32,6 +32,9 @@ public:
 protected:
     void timerEvent(QTimerEvent *event);
 
+signals:
+    void writeSerial(struCseSensor *wstrBuf);
+
 private slots:
     void SerialDataSlot(char *strBuf);
     void ConnectedSlot();
@@ -61,6 +64,8 @@ private:
 private:
     CCfgFile m_cfgFile;
     CUartThread *m_pThread;
+    CUartThread *m_wpThread;
+
     CUartThread m_gsmThread;
     CTCPClient *m_pTcpClient1;
     CTCPClient *m_pTcpClient2;

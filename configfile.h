@@ -33,6 +33,9 @@ public:
     QString m_strDev;
     unsigned int m_nBaud;
 
+    QString w_strDev;
+    unsigned int w_nBaud;
+
     // server config
     QString m_strIP;
     unsigned int m_nPort;

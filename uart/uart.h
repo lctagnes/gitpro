@@ -10,7 +10,7 @@
 # include <unistd.h>
 # include <termios.h>
 # include <stdlib.h>
-
+#include "common/define.h"
 //串口定义
 //extern char *dev;      //串口号 /dev/ttymxc0  对应于串口1  全局变量声明
 
@@ -20,5 +20,6 @@ extern int setport(int fd, int baud, int databits, int stopbits, int parity);//�
 extern int readport(int fd, char *buf, int maxLen);//读数据，参数为串口，BUF，长度
 extern int writeport(int fd, char *buf, int len);  //发送数据 防采集
 extern void closeport(int fd);
+extern int wwriteport(int fd, struCseSensor *buf, int len);
 
 #endif // UART_H
