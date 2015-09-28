@@ -16,7 +16,7 @@ CMonitor::CMonitor(QObject *parent)
     m_bConnected1 = false;
     m_bConnected2 = false;
 
-        GetLocalIP();
+    GetLocalIP();
 
     char * strDev = m_cfgFile.m_strDev.toLatin1().data();
     int nBaud = m_cfgFile.m_nBaud;
@@ -91,6 +91,7 @@ CMonitor::CMonitor(QObject *parent)
     // initial all connect
     connect(m_pThread, SIGNAL(sSerialData(char *)), this, SLOT(SerialDataSlot(char *)));
 
+    connect(this, SIGNAL(writeSerial(struCseSensor *)), m_wpThread, SLOT(writeSerialSlot(struCseSensor *)));
 
 
 }

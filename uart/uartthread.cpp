@@ -1,4 +1,5 @@
 #include "uartthread.h"
+#include "monitor.h"
 
 CUartThread::CUartThread(QObject *parent)
     :QThread(parent)
@@ -166,7 +167,7 @@ void CUartThread::wReadUart()
     if((wszBuf[0] == 'O') && (wszBuf[1] == 'K'))
     {
 
-        connect(CMonitor, SIGNAL(writeSerial(struCseSensor *)), this, SLOT(writeSerialSlot(char *)));
+        w_run = true;
 
         if(wLen <= 0)
         {
@@ -174,11 +175,6 @@ void CUartThread::wReadUart()
             CLOG::Log("Read sensor data error .");
             return;
         }
-
-//        for(int i = 0; i < nLen; i++)
-//        {
-//            printf("%x\r\n", *(szBuf + i));
-//        }
 
         printf("Read uart data success  \r\n");
         CLOG::Log("Read uart data success .");
@@ -199,15 +195,17 @@ void CUartThread::WriteUart( char *strBuf, int nLen)
     writeport(m_nFD, strBuf, nLen);
 }
 
-void CUartThread::writeSerial(struCseSensor *wstrbuf)
+void CUartThread::writeUartSerial(struCseSensor *wstrbuf)
 {
-    CLOG::Log("writeSerial .");
+    CLOG::Log("writeUartSerial .");
 
     wwriteport(wFD, wstrbuf, sizeof(struCseSensor));
 }
 void CUartThread::writeSerialSlot(struCseSensor *wstrBuf)
 {
-    CLOG::Log("writeSerial .");
-
-    writeSerial(wstrBuf);
+    CLOG::Log("writeUartSerial .");
+    while (w_run)
+    {
+    writeUartSerial(wstrBuf);
+    }
 }
