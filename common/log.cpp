@@ -1,3 +1,17 @@
+/************************************************************
+ *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
+ *
+ *FileName:		log.cpp        
+ *Writer:		smart-skynet
+ *create Date:  2015/01/01
+ *Rewriter:		kason
+ *Rewrite Date:	2015/09/28
+ *Impact:
+ *
+ *Main Content(Function Name、parameters、returns)
+ *
+ ************************************************************/
+
 #include "log.h"
 #include <QTextStream>
 #include <QDebug>
@@ -27,12 +41,12 @@ void CLOG::Log(QString strLog)
 //        file.remove();
 //    }
 
-    QDateTime time = QDateTime::currentDateTime();  //杩斿洖褰撳墠鏃ユ湡浜嬩欢锛屾潵鑷簬绯荤粺鏃堕挓
+    QDateTime time = QDateTime::currentDateTime();
     QString strTime = time.toString("yyyy-MM-dd hh:mm:ss   ");
 
     strLog = strTime + strLog + "\r\n";
 
-    file.write(strLog.toLatin1().data(), strLog.length());  //toLatin1: ISO-8859-1缂栫爜
+    file.write(strLog.toLatin1().data(), strLog.length());
 
     file.close();
 }

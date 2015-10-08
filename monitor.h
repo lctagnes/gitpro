@@ -1,11 +1,25 @@
+/************************************************************
+ *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
+ *
+ *FileName:		monitor.h        
+ *Writer:		smart-skynet
+ *create Date:  2015/01/01
+ *Rewriter:		kason
+ *Rewrite Date:	2015/09/28
+ *Impact:
+ *
+ *Main Content(Function Name、parameters、returns)
+ *
+ ************************************************************/
+
 #ifndef MONITOR_H
 #define MONITOR_H
 
 #include <cstring>
-#include <math.h>
-#include <stdlib.h>
-#include <signal.h>
-#include <unistd.h>
+#include<math.h>
+#include<stdlib.h>
+#include<signal.h>
+#include<unistd.h>
 
 #include "configfile.h"
 #include "common/log.h"
@@ -33,7 +47,7 @@ protected:
     void timerEvent(QTimerEvent *event);
 
 signals:
-    void writeSerial(struCseSensor *wstrBuf);
+    void writeSerial(char *wstrBuf);
 
 private slots:
     void SerialDataSlot(char *strBuf);
@@ -48,6 +62,8 @@ private:
     void IsAlarm(struCseSensor &seSerial, QString &strAlarm);
 
     void SendCMDToSerialPort();
+
+    // void SendTowSerialPort();
 
     void SendGSM(QString & strMsg);
 
@@ -64,7 +80,7 @@ private:
 private:
     CCfgFile m_cfgFile;
     CUartThread *m_pThread;
-    CUartThread *m_wpThread;
+    CUartThread2 *CommunicateToUpperComputerpThread;
 
     CUartThread m_gsmThread;
     CTCPClient *m_pTcpClient1;

@@ -1,3 +1,17 @@
+/************************************************************
+ *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
+ *
+ *FileName:		monitor.cpp        
+ *Writer:		smart-skynet
+ *create Date:  2015/01/01
+ *Rewriter:		kason
+ *Rewrite Date:	2015/10/08
+ *Impact:
+ *
+ *Main Content(Function Name、parameters、returns)
+ *
+ ************************************************************/
+
 #include "monitor.h"
 
 CMonitor::CMonitor(QObject *parent)
@@ -6,27 +20,25 @@ CMonitor::CMonitor(QObject *parent)
     CLOG::Log("Application start .");
     //    QString strSub = "Door opened . \r\n";
     //    SendGSM(strSub);
-    m_nGSMTimerID = startTimer(m_cfgFile.m_nSendGSM_TIME *60* 1000);  //60 * 1000 ms
+    m_nGSMTimerID = startTimer(m_cfgFile.m_nSendGSM_TIME *60* 1000);    // 60 * 1000 ms
 
-
-    m_pThread = new CUartThread;
-    m_wpThread = new CUartThread;
+    m_pThread = new CUartThread;                            // uart1与采集板通信串口线程
+    CommunicateToUpperComputerpThread = new CUartThread2;    // uart2与上位机通信串口线程
 
     m_nLCDLast = 0;
     m_bConnected1 = false;
     m_bConnected2 = false;
 
-    GetLocalIP();
+    //    GetLocalIP();
 
     char * strDev = m_cfgFile.m_strDev.toLatin1().data();
     int nBaud = m_cfgFile.m_nBaud;
 
-    char * wstrDev = m_cfgFile.w_strDev.toLatin1().data();
-    int wBaud = m_cfgFile.w_nBaud;
+    char * strDev_for_upper_computer = m_cfgFile.strDev_2.toLatin1().data();
+    int baud_2 = m_cfgFile.nBaud_2;
 
     int nFD = m_pThread->Initial(strDev, nBaud);
-
-    int wFD = m_wpThread->Initial(wstrDev, wBaud);
+    int uart2_fd = CommunicateToUpperComputerpThread->Initial(strDev_for_upper_computer, baud_2);
 
     if(nFD>0)
     {
@@ -38,7 +50,6 @@ CMonitor::CMonitor(QObject *parent)
         m_pThread->Start();
         m_nTimerID = startTimer(m_cfgFile.m_nSampTime * 1000);
     }
-
     if(-1 == nFD)
     {
         printf("Open Serial Port Failed , Exit .\r\n");
@@ -52,48 +63,41 @@ CMonitor::CMonitor(QObject *parent)
         // exit(0);
     }
 
-    if(wFD>0)
+    if(uart2_fd > 0)
     {
-        printf("Open Serial Port w Success .\r\n");
-        CLOG::Log("Open Serial Port w Success .");
+        printf("Open Serial 2 Port Success .\r\n");
+        CLOG::Log("Open Serial 2 Port Success .");
 
         // start recv thread
 
-        m_wpThread->Start();
+        m_pThread->Start();
+        m_nTimerID = startTimer(m_cfgFile.m_nSampTime * 1000);
     }
-
-    if(-1 == nFD)
+    if(-1 == uart2_fd)
     {
-        printf("Open Serial Port w Failed , Exit .\r\n");
-        CLOG::Log("Open Serial Port w Failed , Exit .");
+        printf("Open Serial 2 Port Failed , Exit .\r\n");
+        CLOG::Log("Open Serial 2 Port Failed , Exit .");
         //  exit(0);
     }
     else
     {
-        printf("Set Serial Port w Failed , Exit .\r\n");
-        CLOG::Log("Set Serial Port w Failed , Exit .");
+        printf("Set Serial 2 Port Failed , Exit .\r\n");
+        CLOG::Log("Set Serial 2 Port Failed , Exit .");
         // exit(0);
     }
 
     m_pTcpClient1 = new CTCPClient;
     m_pTcpClient2 = new CTCPClient;
 
-
     m_nTcpTimerID = startTimer(60*30* 1000);
     m_pTcpClient1->ConnectToServer1(m_cfgFile.m_strIP, m_cfgFile.m_nPort);
-    connect(m_pTcpClient1, SIGNAL(sConnected()), this, SLOT(GetServerIP()));
-
-
-    connect(m_pTcpClient2, SIGNAL(sConnected()), this, SLOT(ConnectedSlot()));
-
-
 
     // initial all connect
+    connect(m_pTcpClient1, SIGNAL(sConnected()), this, SLOT(GetServerIP()));
+    connect(m_pTcpClient2, SIGNAL(sConnected()), this, SLOT(ConnectedSlot()));
+
     connect(m_pThread, SIGNAL(sSerialData(char *)), this, SLOT(SerialDataSlot(char *)));
-
-    connect(this, SIGNAL(writeSerial(struCseSensor *)), m_wpThread, SLOT(writeSerialSlot(struCseSensor *)));
-
-
+    connect(this, SIGNAL(writeSerial(char *)), CommunicateToUpperComputerpThread, SLOT(writeSerialSlot(char *)));
 }
 
 CMonitor::~CMonitor()
@@ -136,6 +140,17 @@ CMonitor::~CMonitor()
         delete m_pThread;
         m_pThread = NULL;
     }
+
+    if(NULL != CommunicateToUpperComputerpThread)
+    {
+        CommunicateToUpperComputerpThread->Stop();
+
+        // sleep 50 ms, wait thread exit
+        sleep(50);
+
+        delete CommunicateToUpperComputerpThread;
+        CommunicateToUpperComputerpThread = NULL;
+    }
 }
 
 
@@ -145,7 +160,7 @@ void CMonitor::SerialDataSlot(char *strBuf)
     DecodeSerialData(strBuf);
 }
 
-char* CMonitor::GetSystemTime()                  //获取系统当前的时间，以"yyyy-MM-dd hh:mm:ss"格式保存到m_strTime
+char* CMonitor::GetSystemTime()          // 获取系统当前的时间，以"yyyy-MM-dd hh:mm:ss"格式保存到m_strTime
 {
     QDateTime time = QDateTime::currentDateTime();
     m_strTime = time.toString("yyyy-MM-dd hh:mm:ss");
@@ -171,13 +186,13 @@ void CMonitor::GetLocalIP()
     }
 }
 
-void CMonitor::timerEvent(QTimerEvent *event)   //事件处理器，接受定时器事件
+void CMonitor::timerEvent(QTimerEvent *event)   // 事件处理器，接受定时器事件
 {
-    if(m_nTimerID == event->timerId())          //构造一个定时器标识符为timerID的定时器事件对象
+    if(m_nTimerID == event->timerId())          // 构造一个定时器标识符为timerID的定时器事件对象
     {
         SendCMDToSerialPort();
     }
-    if(m_nGSMTimerID == event->timerId())
+    if(m_nGSMTimerID == event->timerId())       // 构造一个定时器标识符为imerID的定时器事件对象
     {
         IsAlarm(seSerial, strAlarm);
         if(CSE_ALARM_STATUS == seSerial.status)
@@ -211,7 +226,7 @@ void CMonitor::timerEvent(QTimerEvent *event)   //事件处理器，接受定时
 
 }
 
-void CMonitor::SendCMDToSerialPort()            //向串口发指令
+void CMonitor::SendCMDToSerialPort()        // 向串口发指令
 {
     char szCMD[CMD_LEN] = {0x1B, 0X10, 0X04, 0X00, 0X00, 0X06, 0X1F, 0X8F};
 
@@ -232,6 +247,12 @@ void CMonitor::SendCMDToSerialPort()            //向串口发指令
     m_pThread->ReadUart();
 }
 
+/*
+void CMonitor::SendTowSerialPort()            //向串口2发指令
+{
+    m_wpThread->wReadUart();
+}
+*/
 
 void CMonitor::DecodeSerialData(char *strBuf)
 {
@@ -359,20 +380,20 @@ void CMonitor::DecodeSerialData(char *strBuf)
     seSerial.status = CSE_NORMAL_STATUS;
 
     //向与安卓设备通信串口发信号
-    struCseSensor wSerial;
-    memset(&wSerial, 0, sizeof(struCseSensor));
-    memcpy(&wSerial, &seSerial, sizeof(struCseSensor));
+    //TestSendMsg ();
+    char wSerial[136] = {0};
+    memset(&wSerial, 0, sizeof(wSerial));
+    memcpy(&wSerial, &seSerial, sizeof(wSerial));
 
-    emit writeSerial(&wSerial);
-
+    emit writeSerial(wSerial);
 
     // QString strAlarm;
-    //    IsAlarm(seSerial, strAlarm);
+    // IsAlarm(seSerial, strAlarm);
 
-    //   GetSystemTime();
+    // GetSystemTime();
 
-    //    QString strLog;
-    //    strLog.arg(1).arg(2) = seSerial.acc
+    // QString strLog;
+    // strLog.arg(1).arg(2) = seSerial.acc
 
     // send sensor to monitor center
     if(true == m_bConnected2)
@@ -809,9 +830,7 @@ void CMonitor::TestSendMsg()
     }
 }
 
-/***************************************************
-        ***
-        ***************************************************/
+
 void CMonitor::DecodeMonitor(struCseMsg * cseMsg)
 {
     struCseMonitor *cseMonitor = (struCseMonitor*)cseMsg->msg;

@@ -7,13 +7,13 @@
 CSmtp::CSmtp()
 {
 	m_status = true;
-	From      = new char[100];//100è¿™ä¸ªé•¿åº¦åº”è¯¥å¤Ÿå¯†ç ç”¨æˆ·åå’Œé‚®ä»¶çš„åœ°å€äº†ï¼Œä¸å¤Ÿå†åŠ 
+	From      = new char[100];//100Õâ¸ö³¤¶ÈÓ¦¸Ã¹»ÃÜÂëÓÃ»§ÃûºÍÓÊ¼şµÄµØÖ·ÁË£¬²»¹»ÔÙ¼Ó
 	To        = new char[100];
 	Date      = new char[100];
 	Subject   = new char[100];
 	Filename  = new char[100];
 
-	recv_data = new char[512];//ç”¨äºæ¥å—smtpæœåŠ¡å™¨çš„å‘æŒ¥ä¿¡æ¯
+	recv_data = new char[512];//ÓÃÓÚ½ÓÊÜsmtp·şÎñÆ÷µÄ·¢»ÓĞÅÏ¢
 	userdes   = new char[100];
 	passdes   = new char[100];
 
@@ -26,7 +26,7 @@ CSmtp::~CSmtp()
         close(m_nSocket);
 	}
 
-	delete []From;//è¿™é‡Œå¯åƒä¸‡åˆ«å¿˜äº†é‡Šæ”¾newç”³è¯·çš„ç©ºé—´
+	delete []From;//ÕâÀï¿ÉÇ§Íò±ğÍüÁËÊÍ·ÅnewÉêÇëµÄ¿Õ¼ä
 	delete []To;
 	delete []Date;
 	delete []Subject;
@@ -147,12 +147,12 @@ void CSmtp::Base64_Decode( unsigned char *chsrc, unsigned char *chdes)
 		*(chsrc+3) = '\0';
 }
 
-std::string CSmtp::Encode(const char * szEncoding, int nSize)//è¿™ä¸ªç¼–ç å¥½ï¼Œå¯ä»¥å‘æ¥šäº†bmpçš„æ‰€æœ‰æ–‡ä»¶
+std::string CSmtp::Encode(const char * szEncoding, int nSize)//Õâ¸ö±àÂëºÃ£¬¿ÉÒÔ·¢³şÁËbmpµÄËùÓĞÎÄ¼ş
 {
-	//Base64ç¼–ç å­—ç¬¦é›†ï¼š
+	//Base64±àÂë×Ö·û¼¯£º
 	std::string m_sBase64Alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/";
 	char *szOutput;
-	//è®¡ç®—ç©ºé—´
+	//¼ÆËã¿Õ¼ä
 	int size = (nSize + 2) / 57 * 2;
 	size += nSize % 3 != 0 ? (nSize - nSize % 3 + 3) / 3 * 4 : nSize / 3 * 4;
 	szOutput = new char[size + 1];
@@ -160,18 +160,18 @@ std::string CSmtp::Encode(const char * szEncoding, int nSize)//è¿™ä¸ªç¼–ç å¥½ï¼
 
 	const char * szInput = szEncoding;
 
-	int nBitsRemaining = 0, nPerRowCount = 0;//æ¢è¡Œè®¡æ•°
+	int nBitsRemaining = 0, nPerRowCount = 0;//»»ĞĞ¼ÆÊı
 	register int nBitStorage = 0, nScratch = 0;
 	int i, lp, endlCount;
 
 	for(i=0, lp=0, endlCount = 0; lp < nSize; lp++)
 	{
 		nBitStorage = (nBitStorage << 8) | (szInput[lp] & 0xff);//1 byte//the lowest-byte to 0 not cycle
-		nBitsRemaining += 8;//è¯»äº†ä¸€ä¸ªå­—èŠ‚ï¼ŒåŠ å…«ä½
+		nBitsRemaining += 8;//¶ÁÁËÒ»¸ö×Ö½Ú£¬¼Ó°ËÎ»
 
-		do//nBitStorage"å‰©ä¸‹çš„ä½"è®°å½•å˜é‡
+		do//nBitStorage"Ê£ÏÂµÄÎ»"¼ÇÂ¼±äÁ¿
 		{
-			nScratch = nBitStorage >> (nBitsRemaining - 6) & 0x3f;//æå‡ºæœ€å‰çš„å…­ä½
+			nScratch = nBitStorage >> (nBitsRemaining - 6) & 0x3f;//Ìá³ö×îÇ°µÄÁùÎ»
 			szOutput[i++] = m_sBase64Alphabet[nScratch];
 			nPerRowCount++;
 			if(nPerRowCount >= 76)
@@ -187,8 +187,8 @@ std::string CSmtp::Encode(const char * szEncoding, int nSize)//è¿™ä¸ªç¼–ç å¥½ï¼
 
 	if(nBitsRemaining != 0)
 	{
-		//åŸæ•°æ®æœ€åå¤šä¸€ä¸ªä¸¤ä¸ªå­—èŠ‚æ—¶è¿›å…¥ï¼Œç¼–ç æœªç»“æŸnBitsRemaining!=0
-		nScratch = nBitStorage << (6-nBitsRemaining);//ç©ºä½è¡¥0
+		//Ô­Êı¾İ×îºó¶àÒ»¸öÁ½¸ö×Ö½ÚÊ±½øÈë£¬±àÂëÎ´½áÊønBitsRemaining!=0
+		nScratch = nBitStorage << (6-nBitsRemaining);//¿ÕÎ»²¹0
 		nScratch &= 0x3f;
 		szOutput[i++] = m_sBase64Alphabet[nScratch];
 		nPerRowCount++;
@@ -222,7 +222,7 @@ std::string CSmtp::Encode(const char * szEncoding, int nSize)//è¿™ä¸ªç¼–ç å¥½ï¼
 
 bool CSmtp::GetResponse()
 {
-    sleep(1);//è¿™ä¸ªæ—¶å»¶å¾ˆé‡è¦ï¼ŒèŠ±äº†æˆ‘ä¸€å¤©çš„æ—¶é—´æ‰å¼„å‡ºæ¥ï¼Œè¦çœ‹ä½ çš„ç½‘é€Ÿï¼Œå¦‚æœç½‘é€Ÿå¿«ï¼Œå¯ä»¥ä¸è¦è¿™ä¸ªæ—¶å»¶
+    sleep(1);//Õâ¸öÊ±ÑÓºÜÖØÒª£¬»¨ÁËÎÒÒ»ÌìµÄÊ±¼ä²ÅÅª³öÀ´£¬Òª¿´ÄãµÄÍøËÙ£¬Èç¹ûÍøËÙ¿ì£¬¿ÉÒÔ²»ÒªÕâ¸öÊ±ÑÓ
 
 	try{
 		memset(recv_data, 0, sizeof(recv_data));
@@ -230,7 +230,7 @@ bool CSmtp::GetResponse()
 
 		if(rt == SOCKET_ERROR)
 			return false;
-		recv_data[rt]='\0';	//åœ¨æœ€åä¸€ä¸ªå­—æ¯åé¢åŠ ä¸Šç»“æŸç¬¦å·,æˆ–è€…åœ¨æ¥æ”¶ä¹‹å‰zeromemoryä¸€ä¸‹recv_data
+		recv_data[rt]='\0';	//ÔÚ×îºóÒ»¸ö×ÖÄ¸ºóÃæ¼ÓÉÏ½áÊø·ûºÅ,»òÕßÔÚ½ÓÊÕÖ®Ç°zeromemoryÒ»ÏÂrecv_data
 		//	printf("recv : %s\n",recv_data);
 		//	m_fstream<<recv_data<<endl;
 
@@ -245,7 +245,7 @@ bool CSmtp::GetResponse()
 		return false;
 	}
 
-	if(*recv_data == '5') //å› ä¸ºç¬¬ä¸€ä¸ªè¿”å›æ•°å­—æ˜¯5ä¸€èˆ¬éƒ½æ˜¯é”™è¯¯ä»£ç ï¼Œè€Œæ­£ç¡®ä»£ç ä¸€èˆ¬éƒ½æ˜¯2æ‰“å¤´çš„
+	if(*recv_data == '5') //ÒòÎªµÚÒ»¸ö·µ»ØÊı×ÖÊÇ5Ò»°ã¶¼ÊÇ´íÎó´úÂë£¬¶øÕıÈ·´úÂëÒ»°ã¶¼ÊÇ2´òÍ·µÄ
 		return false;
 
 	return true;
@@ -269,7 +269,7 @@ int CSmtp::CreateSocket()
 		return SOCKET_ERROR;
 	}
 
-//    long time = 60000;	//è·å–æˆ–è€…å‘é€å¥—æ¥å­—çš„è¶…æ—¶æ—¶é—´ï¼ˆæ¯«ç§’ï¼‰
+//    long time = 60000;	//»ñÈ¡»òÕß·¢ËÍÌ×½Ó×ÖµÄ³¬Ê±Ê±¼ä£¨ºÁÃë£©
 //    if(setsockopt(m_nSocket, SOL_SOCKET, SO_RCVTIMEO, (char *)&time, sizeof(long)) == SOCKET_ERROR )//setsockopt function sets a socket option.
 //	{
 //        close(m_nSocket);
@@ -325,19 +325,19 @@ int CSmtp::ConnectHost(const char *hostname, int port)
 
 int CSmtp::Login(char *username,char *password)
 {
-	char ch[100]; //ç¼“å­˜
+	char ch[100]; //»º´æ
 	memset(ch, 0, 100);
-	if(username == NULL || password == NULL)//ä¸èƒ½æ²¡æœ‰å¯†ç å’Œç”¨æˆ·åé‚®ç®±
+	if(username == NULL || password == NULL)//²»ÄÜÃ»ÓĞÃÜÂëºÍÓÃ»§ÃûÓÊÏä
 	{
 		return SMTP_ERR;
 	}
 
 	usersrc = username;
 	passsrc = password;
-	Base64_Code((unsigned char *)usersrc,(unsigned char *)userdes);//ç¼–ç è¦ç”¨æ— ç¬¦å·çš„å­—ç¬¦å‹
+	Base64_Code((unsigned char *)usersrc,(unsigned char *)userdes);//±àÂëÒªÓÃÎŞ·ûºÅµÄ×Ö·ûĞÍ
 	Base64_Code((unsigned char *)passsrc,(unsigned char *)passdes);
 
-	send_data = "HELO Localhost\r\n";//å‘Šè¯‰æœåŠ¡å™¨å®¢æˆ·ç«¯ç¨‹åºè¦é€šè¯äº†
+	send_data = "HELO Localhost\r\n";//¸æËß·şÎñÆ÷¿Í»§¶Ë³ÌĞòÒªÍ¨»°ÁË
 	rt = send(m_nSocket,send_data,strlen(send_data),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -347,7 +347,7 @@ int CSmtp::Login(char *username,char *password)
 	if(!GetResponse())
 		return SOCKET_ERROR;
 
-	send_data = "AUTH LOGIN\r\n";//å‘Šè¯‰æœåŠ¡å™¨ï¼Œæˆ‘è¦ç™»å½•
+	send_data = "AUTH LOGIN\r\n";//¸æËß·şÎñÆ÷£¬ÎÒÒªµÇÂ¼
 	rt = send(m_nSocket,send_data,strlen(send_data),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -357,7 +357,7 @@ int CSmtp::Login(char *username,char *password)
 	if(!GetResponse())
 		return SOCKET_ERROR;
 
-	sprintf(ch,"%s\r\n",userdes);//ç”¨æˆ·å
+	sprintf(ch,"%s\r\n",userdes);//ÓÃ»§Ãû
 	rt = send(m_nSocket,(char *)ch,strlen(ch),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -367,7 +367,7 @@ int CSmtp::Login(char *username,char *password)
 	if(!GetResponse())
 		return NAME_ERR;
 
-	sprintf(ch,"%s\r\n",passdes);	//å¯†ç ="MTI1c2YzX3pwX2Zz"
+	sprintf(ch,"%s\r\n",passdes);	//ÃÜÂë="MTI1c2YzX3pwX2Zz"
 	rt = send(m_nSocket,(char *)ch,strlen(ch),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -389,7 +389,7 @@ int CSmtp::SendMail(const char *from,const char *to,const char *date,const char 
 		return SMTP_ERR;
 	}
 
-	sprintf(From,"MAIL FROM: <%s>\r\n",from);//æŒ‡å®šå‘ä¿¡è€…çš„é‚®ç®±
+	sprintf(From,"MAIL FROM: <%s>\r\n",from);//Ö¸¶¨·¢ĞÅÕßµÄÓÊÏä
 	rt = send(m_nSocket,From,strlen(From),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -401,7 +401,7 @@ int CSmtp::SendMail(const char *from,const char *to,const char *date,const char 
 	if(!GetResponse())
 		return FROM_ERR;
 
-	sprintf(To,"RCPT TO: <%s>\r\n",to);//æŒ‡å®šæ”¶ä¿¡çš„ä¿¡ç®±
+	sprintf(To,"RCPT TO: <%s>\r\n",to);//Ö¸¶¨ÊÕĞÅµÄĞÅÏä
 	rt = send(m_nSocket,To,strlen(To),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -412,8 +412,8 @@ int CSmtp::SendMail(const char *from,const char *to,const char *date,const char 
 	if(!GetResponse())
 		return TO_ERR;
 
-	//è¦å‘é€é‚®ä»¶å†…å®¹äº†ï¼Œå¦‚æœæœåŠ¡å™¨å“åº”ç æ˜¯354ï¼Œåˆ™è®¤ä¸ºéšåæ¥å—åˆ°çš„æ•°æ®æ˜¯é‚®ä»¶çš„å†…å®¹ï¼Œä½†æ˜¯æ³¨æ„é‚®ä»¶å†…å®¹æœ‰ä¸€å®šçš„æ ¼å¼
-	//å…¶å®æ ‡å‡†çš„å­—æ®µæœ‰å¾ˆå¤šï¼Œå‘ä¸€äº›å¿…é¡»çš„å°±è¡Œäº†ï¼Œå¤Ÿè§£æå°±è¡Œ
+	//Òª·¢ËÍÓÊ¼şÄÚÈİÁË£¬Èç¹û·şÎñÆ÷ÏìÓ¦ÂëÊÇ354£¬ÔòÈÏÎªËæºó½ÓÊÜµ½µÄÊı¾İÊÇÓÊ¼şµÄÄÚÈİ£¬µ«ÊÇ×¢ÒâÓÊ¼şÄÚÈİÓĞÒ»¶¨µÄ¸ñÊ½
+	//ÆäÊµ±ê×¼µÄ×Ö¶ÎÓĞºÜ¶à£¬·¢Ò»Ğ©±ØĞëµÄ¾ÍĞĞÁË£¬¹»½âÎö¾ÍĞĞ
 	send_data = "DATA\r\n";
 	rt = send(m_nSocket,send_data,strlen(send_data),0);
 	if(rt == SOCKET_ERROR)
@@ -425,7 +425,7 @@ int CSmtp::SendMail(const char *from,const char *to,const char *date,const char 
 	if(!GetResponse())
 		return SMTP_ERR;
 
-	sprintf(From,"From: %s\r\n",from);//é‚®ä»¶å›ºå®šæ ¼å¼ï¼Œæ˜¯å‘é€è€…çš„å§“å
+	sprintf(From,"From: %s\r\n",from);//ÓÊ¼ş¹Ì¶¨¸ñÊ½£¬ÊÇ·¢ËÍÕßµÄĞÕÃû
 	rt = send(m_nSocket,From,strlen(From),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -433,7 +433,7 @@ int CSmtp::SendMail(const char *from,const char *to,const char *date,const char 
 		return SOCKET_ERROR;
 	}
 
-	sprintf(To,"To: %s\r\n",to);//é‚®ä»¶çš„å›ºå®šçš„æ ¼å¼ï¼Œæ˜¯æ¥å—è€…çš„å§“å
+	sprintf(To,"To: %s\r\n",to);//ÓÊ¼şµÄ¹Ì¶¨µÄ¸ñÊ½£¬ÊÇ½ÓÊÜÕßµÄĞÕÃû
 	rt = send(m_nSocket,To,strlen(To),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -441,7 +441,7 @@ int CSmtp::SendMail(const char *from,const char *to,const char *date,const char 
 		return SOCKET_ERROR;
 	}
 
-	sprintf(Date,"Date: %s\r\n",date);//é‚®ä»¶çš„å›ºå®šçš„æ ¼å¼ï¼Œæ˜¯å‘é€æ—¶é—´
+	sprintf(Date,"Date: %s\r\n",date);//ÓÊ¼şµÄ¹Ì¶¨µÄ¸ñÊ½£¬ÊÇ·¢ËÍÊ±¼ä
 	rt = send(m_nSocket,Date,strlen(Date),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -449,7 +449,7 @@ int CSmtp::SendMail(const char *from,const char *to,const char *date,const char 
 		return SOCKET_ERROR;
 	}
 
-	sprintf(Subject,"Subject: %s\r\n",subject);//é‚®ä»¶çš„æ ¼å¼ï¼Œæ˜¯é‚®ä»¶çš„ä¸»é¢˜
+	sprintf(Subject,"Subject: %s\r\n",subject);//ÓÊ¼şµÄ¸ñÊ½£¬ÊÇÓÊ¼şµÄÖ÷Ìâ
 	rt = send(m_nSocket,Subject,strlen(Subject),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -457,7 +457,7 @@ int CSmtp::SendMail(const char *from,const char *to,const char *date,const char 
 		return SOCKET_ERROR;
 	}
 
-	send_data = "\r\n";//é‚®ä»¶çš„æœ€åä¸€ä¸ªç©ºè¡Œ
+	send_data = "\r\n";//ÓÊ¼şµÄ×îºóÒ»¸ö¿ÕĞĞ
 	rt = send(m_nSocket,send_data,strlen(send_data),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -465,14 +465,14 @@ int CSmtp::SendMail(const char *from,const char *to,const char *date,const char 
 		return SOCKET_ERROR;
 	}
 
-	rt = send(m_nSocket,(char *)data,strlen(data),0);//é‚®ä»¶æ­£æ–‡
+	rt = send(m_nSocket,(char *)data,strlen(data),0);//ÓÊ¼şÕıÎÄ
 	if(rt == SOCKET_ERROR)
 	{
 		//	closesocket(m_nSocket);
 		return SOCKET_ERROR;
 	}
 
-	send_data = "\r\n";//é‚®ä»¶çš„æœ€åä¸€ä¸ªç©ºè¡Œï¼Œå°±æ˜¯ä¸ºäº†ç¾è§‚ä¸€ä¸‹
+	send_data = "\r\n";//ÓÊ¼şµÄ×îºóÒ»¸ö¿ÕĞĞ£¬¾ÍÊÇÎªÁËÃÀ¹ÛÒ»ÏÂ
 	rt = send(m_nSocket,send_data,strlen(send_data),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -493,7 +493,7 @@ bool CSmtp::End()
 		return false;
 	}
 
-	send_data = "--The email from monitor center --\r\n"; //ç¾è§‚
+	send_data = "--The email from monitor center --\r\n"; //ÃÀ¹Û
 	rt = send(m_nSocket,send_data,strlen(send_data),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -501,18 +501,7 @@ bool CSmtp::End()
 		return false;
 	}
 
-	send_data = "\r\n.\r\n"; //é‚®ä»¶çœŸæ­£çš„ç»“æŸæ ‡å¿—
-	rt = send(m_nSocket,send_data,strlen(send_data),0);
-	if(rt == SOCKET_ERROR)
-	{
-		//	closesocket(m_nSocket);
-		return false;
-	}
-
-	if(!GetResponse())
-		return false;
-
-	send_data = "QUIT\r\n";//ç”¨æ¥ä¸­æ­¢ä¸SMTPçš„ä¼šè¯
+	send_data = "\r\n.\r\n"; //ÓÊ¼şÕæÕıµÄ½áÊø±êÖ¾
 	rt = send(m_nSocket,send_data,strlen(send_data),0);
 	if(rt == SOCKET_ERROR)
 	{
@@ -523,7 +512,18 @@ bool CSmtp::End()
 	if(!GetResponse())
 		return false;
 
-	return true;//æ­£å¸¸ç»“æŸäº†
+	send_data = "QUIT\r\n";//ÓÃÀ´ÖĞÖ¹ÓëSMTPµÄ»á»°
+	rt = send(m_nSocket,send_data,strlen(send_data),0);
+	if(rt == SOCKET_ERROR)
+	{
+		//	closesocket(m_nSocket);
+		return false;
+	}
+
+	if(!GetResponse())
+		return false;
+
+	return true;//Õı³£½áÊøÁË
 }
 
 bool CSmtp::DisplayError(const char *rev)
@@ -533,71 +533,71 @@ bool CSmtp::DisplayError(const char *rev)
 	switch (n)
 	{
 	case 220:
-		m_RetStr = "æœåŠ¡å°±ç»ª";
+		m_RetStr = "·şÎñ¾ÍĞ÷";
 		break;
 	case 221:
-		m_RetStr = "æœåŠ¡å…³é—­";
+		m_RetStr = "·şÎñ¹Ø±Õ";
 		break;
 	case 250:
-		m_RetStr = "è¦æ±‚çš„é‚®ä»¶æ“ä½œå®Œæˆ";
+		m_RetStr = "ÒªÇóµÄÓÊ¼ş²Ù×÷Íê³É";
 		break;
 	case 354:
-		m_RetStr = "å¼€å§‹é‚®ä»¶æ­£æ–‡";
+		m_RetStr = "¿ªÊ¼ÓÊ¼şÕıÎÄ";
 		break;
 	case 421:
-		m_RetStr = "æœåŠ¡æœªå°±ç»ªï¼Œå…³é—­ä¼ è¾“ä¿¡é“";
+		m_RetStr = "·şÎñÎ´¾ÍĞ÷£¬¹Ø±Õ´«ÊäĞÅµÀ";
 		m_status = false;
 		break;
 	case 450:
-		m_RetStr = "è¦æ±‚çš„é‚®ä»¶æ“ä½œæœªå®Œæˆï¼Œé‚®ç®±ä¸å¯ç”¨";
+		m_RetStr = "ÒªÇóµÄÓÊ¼ş²Ù×÷Î´Íê³É£¬ÓÊÏä²»¿ÉÓÃ";
 		m_status = false;
 		break;
 	case 451:
-		m_RetStr = "æ”¾å¼ƒè¦æ±‚çš„æ“ä½œï¼›å¤„ç†è¿‡ç¨‹ä¸­å‡ºé”™";
+		m_RetStr = "·ÅÆúÒªÇóµÄ²Ù×÷£»´¦Àí¹ı³ÌÖĞ³ö´í";
 		m_status = false;
 		break;
 	case 452:
-		m_RetStr = "ç³»ç»Ÿå­˜å‚¨ä¸è¶³ï¼Œè¦æ±‚çš„æ“ä½œæœªæ‰§è¡Œ";
+		m_RetStr = "ÏµÍ³´æ´¢²»×ã£¬ÒªÇóµÄ²Ù×÷Î´Ö´ĞĞ";
 		m_status = false;
 		break;
 	case 535:
-		m_RetStr = "èº«ä»½éªŒè¯å¤±è´¥";
+		m_RetStr = "Éí·İÑéÖ¤Ê§°Ü";
 		m_status = false;
 		break;
 	case 550:
-		m_RetStr = "è¦æ±‚çš„é‚®ä»¶æ“ä½œæœªå®Œæˆï¼Œé‚®ç®±ä¸å¯ç”¨";
+		m_RetStr = "ÒªÇóµÄÓÊ¼ş²Ù×÷Î´Íê³É£¬ÓÊÏä²»¿ÉÓÃ";
 		m_status = false;
 		break;
 	case 551:
-		m_RetStr = "ç”¨æˆ·éæœ¬åœ°ï¼Œè¯·å°è¯•";
+		m_RetStr = "ÓÃ»§·Ç±¾µØ£¬Çë³¢ÊÔ";
 		m_status = false;
 		break;
 	case 552:
-		m_RetStr = "è¿‡é‡çš„å­˜å‚¨ï¼Œè¦æ±‚çš„æ“ä½œæœªæ‰§è¡Œ";
+		m_RetStr = "¹ıÁ¿µÄ´æ´¢£¬ÒªÇóµÄ²Ù×÷Î´Ö´ĞĞ";
 		m_status = false;
 		break;
 	case 553:
-		m_RetStr = "é‚®ç®±åä¸å¯ç”¨ï¼Œè¦æ±‚çš„æ“ä½œæœªæ‰§è¡Œ";
+		m_RetStr = "ÓÊÏäÃû²»¿ÉÓÃ£¬ÒªÇóµÄ²Ù×÷Î´Ö´ĞĞ";
 		m_status = false;
 		break;
 	case 554:
-		m_RetStr = "æ“ä½œå¤±è´¥";
+		m_RetStr = "²Ù×÷Ê§°Ü";
 		m_status = false;
 		break;
 	case 501:
-		m_RetStr = "å‚æ•°æ ¼å¼é”™è¯¯";
+		m_RetStr = "²ÎÊı¸ñÊ½´íÎó";
 		m_status = false;
 		break;
 	case 502:
-		m_RetStr = "å‘½ä»¤ä¸å¯å®ç°";
+		m_RetStr = "ÃüÁî²»¿ÉÊµÏÖ";
 		m_status = false;
 		break;
 	case 503:
-		m_RetStr = "é”™è¯¯çš„å‘½ä»¤åºåˆ—";
+		m_RetStr = "´íÎóµÄÃüÁîĞòÁĞ";
 		m_status = false;
 		break;
 	case 504:
-		m_RetStr = "å‘½ä»¤å‚æ•°ä¸å¯å®ç°";
+		m_RetStr = "ÃüÁî²ÎÊı²»¿ÉÊµÏÖ";
 		m_status = false;
 		break;
 	}

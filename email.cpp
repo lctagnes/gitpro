@@ -75,7 +75,7 @@ void CSendEmail::SetTime()
 
 int CSendEmail::Send(const char * to , const char * subject, const char * data) 
 {
-	SetTime(); //è®¾ç½®æ—¶é—´
+	SetTime(); //ÉèÖÃÊ±¼ä
 //	m_pSmtp = NULL;
 
 	/*m_pSmtp = new CSmtp();
@@ -138,12 +138,12 @@ void CSendEmail::SendEmail(const char * to , const char * subject, const char * 
 
 	int nRS = Send(to, subject, data);
 
-    switch (nRS)
+	switch (nRS)
 	{
 	case SOCKET_ERROR:		
 		strErr = "Create socket failed .";
 		break;
-    case SMTP_OK:
+	case SMTP_OK:		
 		strErr = "Send email success .";
 		break;
 	case CONNECT_HOST_ERR:

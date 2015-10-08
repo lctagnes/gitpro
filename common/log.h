@@ -1,3 +1,17 @@
+/************************************************************
+ *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
+ *
+ *FileName:		log.h        
+ *Writer:		smart-skynet
+ *create Date:  2015/01/01
+ *Rewriter:		kason
+ *Rewrite Date:	2015/09/28
+ *Impact:
+ *
+ *Main Content(Function Name、parameters、returns)
+ *
+ ************************************************************/
+
 #ifndef LOG_H
 #define LOG_H
 

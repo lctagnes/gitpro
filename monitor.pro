@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     uart/uartthread.cpp \
     tcp/tcpclient.cpp \
     email.cpp \
-    smtp.cpp
+    smtp.cpp \
+    uart/uartthread2.cpp
 
 HEADERS += \
     uart/uart.h \

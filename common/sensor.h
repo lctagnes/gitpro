@@ -1,3 +1,28 @@
+/************************************************************
+ *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
+ *
+ *FileName:		sensor.h        
+ *Writer:		smart-skynet
+ *create Date:  2015/01/01
+ *Rewriter:		kason
+ *Rewrite Date:	2015/09/30
+ *Impact:
+ *
+ *Main Content(Function Name、parameters、returns)
+ *
+ *结构体: Fan_Valid
+ *说  明: 风扇配置
+ *
+ *结构体: Sensor_Valiad;
+ *说  明: 传感器状态集合结构体
+ *
+ *结构体: Sensor_Data
+ *说  明: 传感器数据集合结构体
+ *
+ ************************************************************/
+
+
+
 #ifndef SENSOR_H
 #define SENSOR_H
 
@@ -15,39 +40,44 @@ const int MAX_FIL = MAX_IDL;
 
 typedef struct
 {
-    uint8 En[16];		// 0 无风扇 1 有风扇
-    uint8 Type[16];		// 0 轴式，可PWM调速无脉冲反馈;1 有脉冲反馈;其它 轴式 不可调速，无反馈
+    uint8 En[16];				// 0:无风扇 	1:有风扇
+    uint8 Type[16];				// 0:轴式，可PWM调速无脉冲反馈; 1:有脉冲反馈; 其它:轴式 不可调速，无反馈
 } Fan_Valid;
 
 typedef struct {
-    uint8		Smoke_en;	// 0 无烟感 1 有烟感
-    uint8		Humi_en;	// 0 无湿感 1 有湿感
-    uint8		Temp0_en;	// 0 通道0无温感 1 通道0有温感
-    uint8		Temp1_en;
-    uint8		Temp2_en;
-    uint8		Light0_en;	//0 通道0无光感 1 通道0有光感
-    uint8		Light1_en;
-    uint8		Light2_en;
-    uint8		Door0_en;	// 0 通道0无门开关 1 通道0有门开关
-    uint8		Door1_en;
-    uint8		Liquid_en;	//  0 无液位传感器 1 有液位传感器
-    uint8		Shock_en;	// 0 无振动传感器 1 有振动传感器
-    uint8		Ir_en;		//0 无红外传感器 1 有红外传感器
-    uint32		sample_time;	//  传感器采样时间间隔，最小值20，间隔时间= sample_time*100ms
-    uint32		valiad;		// 0x01234567	已初始化/配置
-    Fan_Valid	Fan_En;		// 风扇配置
+    uint8		Smoke_en;		// 0:无烟感 	   1:有烟感
+    uint8		Humi_en;		// 0:无湿感 	   1:有湿感
+    
+    uint8		Temp0_en;		// 0:通道0无温感   1:通道0有温感
+    uint8		Temp1_en;		// 0:通道1无温感   1:通道1有温感
+    uint8		Temp2_en;		// 0:通道2无温感   1:通道2有温感
+    
+    uint8		Light0_en;		// 0:通道0无光感   1:通道0有光感
+    uint8		Light1_en;		// 0:通道1无光感   1:通道1有光感
+    uint8		Light2_en;		// 0:通道2无光感   1:通道2有光感
+    
+    uint8		Door0_en;		// 0:通道0无门开关 1:通道0有门开关
+    uint8		Door1_en;		// 0:通道1无门开关 1:通道1有门开关
+    
+    uint8		Liquid_en;		// 0:无液位传感器  1:有液位传感器
+    uint8		Shock_en;		// 0:无振动传感器  1:有振动传感器
+    uint8		Ir_en;			// 0:无红外传感器  1:有红外传感器
+    
+    uint32		sample_time;	// 传感器采样时间间隔，最小值20，间隔时间= sample_time*100ms
+    uint32		valiad;			// 0x01234567	已初始化/配置
+    Fan_Valid	Fan_En;			// 风扇配置
 } Sensor_Valiad;
 
 
 typedef struct {
-    Sensor_Valiad	valiad;	// data valiad
-    uint8			Smoke_status;	// 0:	alarm		1: normal
-    uint8			Door0_status;	// 0:	close		1:open
-    uint8			Door1_status;	// 0:	close		1:open
-    uint8			Liquid_status;	// 0:	alarm		1:nomal
-    uint8			Shock_status;	// 0:	alarm		1:normal
-    uint8			Ir_status;		// 0:	normal	1:humman close
-    float			am2301[2];		// 温/湿度值，需转换
+    Sensor_Valiad	valiad;			// data valiad
+    uint8		Smoke_status;		// 0:	alarm		1: normal
+    uint8		Door0_status;		// 0:	close		1:open
+    uint8		Door1_status;		// 0:	close		1:open
+    uint8		Liquid_status;		// 0:	alarm		1:nomal
+    uint8		Shock_status;		// 0:	alarm		1:normal
+    uint8		Ir_status;			// 0:	normal		1:humman close
+    float		am2301[2];			// 温/湿度值，需转换
     uint16		light_intensity[3];	// 光强度
     float			temp[3];		// 温度
     uint16 fan_speed[16];
@@ -94,7 +124,7 @@ const uint16 Table_CRC[256] =
 
 static uint16 crcxdata(uint16 length, uint8 clear, void  *buffer)
 {
-    uint16  i;
+    uint16 i;
     uint8  *p;
 
   //  uint16 crc_val = 0;

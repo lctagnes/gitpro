@@ -1,3 +1,17 @@
+/************************************************************
+ *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
+ *
+ *FileName:		configfile.cpp
+ *Writer:		smart-skynet
+ *create Date:  2015/01/01
+ *Rewriter:		kason
+ *Rewrite Date:	2015/09/28
+ *Impact:
+ *
+ *Main Content(Function Name、parameters、returns)
+ *
+ ************************************************************/
+
 #include "configfile.h"
 #include <QDebug>
 CCfgFile::CCfgFile()
@@ -25,8 +39,8 @@ void CCfgFile::ReadFile()
     m_strDev = m_setting->value("serialport/DEV").toString().trimmed();
     m_nBaud = m_setting->value("serialport/BAUD").toInt();
 
-    w_strDev = m_setting->value("serialport/DEV2").toString().trimmed();
-    w_nBaud = m_setting->value("serialport/BAUD2").toInt();
+    strDev_for_upper_computer = m_setting->value("serialport/DEV2").toString().trimmed();
+    baud_2 = m_setting->value("serialport/BAUD2").toInt();
 
     m_strIP = m_setting->value("server/IP").toString().trimmed();
     m_nPort = m_setting->value("server/PORT").toInt();
@@ -74,11 +88,6 @@ void CCfgFile::VerifyData()
     if(0 == m_nBaud)
     {
         m_nBaud = 115200;
-    }
-
-    if(0 == w_nBaud)
-    {
-        m_nBaud = 9600;
     }
 
     if(0 == m_nSampTime)
@@ -155,9 +164,6 @@ void CCfgFile::SaveFile()
 
     m_setting->setValue("serialport/DEV", m_strDev);
     m_setting->setValue("serialport/BAUD", m_nBaud);
-
-    m_setting->setValue("serialport/DEV2", w_strDev);
-    m_setting->setValue("serialport/BAUD2", w_nBaud);
 
     m_setting->setValue("server/IP", m_strIP);
     m_setting->setValue("server/PORT", m_nPort);

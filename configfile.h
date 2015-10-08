@@ -1,3 +1,17 @@
+/************************************************************
+ *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
+ *
+ *FileName:		configfile.h       
+ *Writer:		smart-skynet
+ *create Date:  2015/01/01
+ *Rewriter:		kason
+ *Rewrite Date:	2015/09/28
+ *Impact:
+ *
+ *Main Content(Function Name、parameters、returns)
+ *
+ ************************************************************/
+
 #ifndef FILE_H
 #define FILE_H
 
@@ -33,8 +47,8 @@ public:
     QString m_strDev;
     unsigned int m_nBaud;
 
-    QString w_strDev;
-    unsigned int w_nBaud;
+    QString strDev_for_upper_computer;
+    unsigned int baud_2;
 
     // server config
     QString m_strIP;

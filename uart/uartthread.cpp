@@ -1,10 +1,23 @@
+/************************************************************
+ *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
+ *
+ *FileName:		uartthread.cpp
+ *Writer:		smart-skynet
+ *create Date:  2015/01/01
+ *Rewriter:		kason
+ *Rewrite Date:	2015/09/28
+ *Impact:
+ *
+ *Main Content(Function Name、parameters、returns)
+ *
+ ************************************************************/
+
 #include "uartthread.h"
-#include "monitor.h"
 
 CUartThread::CUartThread(QObject *parent)
     :QThread(parent)
 {
-    m_bRun = false;      //寮€濮嬬疆涓簍rue
+    m_bRun = false;      //线程运行标志位
 }
 
 CUartThread::~CUartThread()
@@ -20,8 +33,7 @@ void CUartThread::run()
     }
 }
 
-//----------------------------------------------------------------
-//涓插彛鍒濆鍖?
+
 int CUartThread::Initial(char *strDev, int nBaud, int nByte, int nStop, char cCheck)
 {
     int ret = 0;
@@ -30,7 +42,7 @@ int CUartThread::Initial(char *strDev, int nBaud, int nByte, int nStop, char cCh
 
     if(m_nFD > 0)
     {
-        ret = setport(m_nFD, nBaud, nByte, nStop, cCheck);  //璁剧疆涓插彛锛屾尝鐗圭巼锛屾暟鎹綅锛屽仠姝綅锛屾牎楠?
+        ret = setport(m_nFD, nBaud, nByte, nStop, cCheck);  //设置端口参数，波特率、数据位、停止位、校验位
         if(ret < 0)
         {
             return 0;
@@ -50,65 +62,63 @@ int CUartThread::Initial(char *strDev, int nBaud, int nByte, int nStop, char cCh
 
 void CUartThread::Stop()
 {
-    m_bRun = false;     //缃仠
+    m_bRun = false;     //停止
     closeport(m_nFD);
 }
 
 void CUartThread::Start()
 {
-    m_bRun = true;     //寮€濮?
+    m_bRun = true;     //开始
     // start thread recv data
     //this->start();
 }
 
-//void CUartThread::ReadUart()
-//{
-//    int nLen = 0;
-//    char szBuf[RECV_DATA_LEN] = {0};
+/*void CUartThread::ReadUart()
+{
+    int nLen = 0;
+    char szBuf[RECV_DATA_LEN] = {0};
 
-//   // int time = 1000;
-//    nLen = readport(m_nFD, szBuf, RECV_CMD_LEN);
+    int time = 1000;
+    nLen = readport(m_nFD, szBuf, RECV_CMD_LEN);
 
-//    if(nLen <= 0)
-//    {
-//        printf("recv data return \r\n");
-//        return;
-//    }
+    if(nLen <= 0)
+    {
+        printf("recv data return \r\n");
+        return;
+    }
 
-//    if((szBuf[0] == 'O') && (szBuf[1] == 'K'))
-//    {
-//        int nDatalen = 0;
-//        if(nLen >= RECV_CMD_LEN)
-//        {
-//            nDatalen = szBuf[3]*256 + szBuf[4] - 5 + 2;
-//            //printf("nDatalen=%d  \r\n", nDatalen);
-//        }
+    if((szBuf[0] == 'O') && (szBuf[1] == 'K'))
+    {
+        int nDatalen = 0;
+        if(nLen >= RECV_CMD_LEN)
+        {
+            nDatalen = szBuf[3]*256 + szBuf[4] - 5 + 2;
+            //printf("nDatalen=%d  \r\n", nDatalen);
+        }
+        nLen = readport(m_nFD, szBuf, nDatalen);
 
-//        nLen = readport(m_nFD, szBuf, nDatalen);
+       // printf("recv data len=%d  \r\n", nLen);
+        if(nLen <= 0)
+        {
+            return;
+        }
 
-//       // printf("recv data len=%d  \r\n", nLen);
+        printf("remit sSerialData(szBuf)  \r\n");
 
-//        if(nLen <= 0)
-//        {
-//            return;
-//        }
+        // put a signals that recv data from serial port
+        emit sSerialData(szBuf);
+    }
 
-//        printf("remit sSerialData(szBuf)  \r\n");
-
-//        // put a signals that recv data from serial port
-//        emit sSerialData(szBuf);
-//    }
-
-//    if((szBuf[0] == 'E') && (szBuf[1] == 'R'))
-//    {
-//        nLen = readport(m_nFD, szBuf, 2);
-//        printf("recv data error  \r\n");
-//    }
-//}
+    if((szBuf[0] == 'E') && (szBuf[1] == 'R'))
+    {
+        nLen = readport(m_nFD, szBuf, 2);
+        printf("recv data error  \r\n");
+    }
+}*/
 void CUartThread::ReadUart()
 {
     int nLen = 0;
-    char szBuf[RECV_DATA_LEN] = {0};    //512
+    char szBuf[RECV_DATA_LEN] = {0};
 
     nLen = readport(m_nFD, szBuf, 5);
     if(nLen < 0)
@@ -153,59 +163,11 @@ void CUartThread::ReadUart()
     }
 }
 
-void CUartThread::wReadUart()
-{
-    int wLen = 0;
-    char wszBuf[8] = {0};
-
-    wLen = readport(wFD, wszBuf, 8);
-    if(wLen < 0)
-    {
-        CLOG::Log("Read w cmd error .");
-        return;
-    }
-    if((wszBuf[0] == 'O') && (wszBuf[1] == 'K'))
-    {
-
-        w_run = true;
-
-        if(wLen <= 0)
-        {
-            //printf("nLen <= 0,Read sensor data error .\r\n");
-            CLOG::Log("Read sensor data error .");
-            return;
-        }
-
-        printf("Read uart data success  \r\n");
-        CLOG::Log("Read uart data success .");
-
-         //put a signals that recv data from serial port
-    }
-
-    if((wszBuf[0] == 'E') && (wszBuf[1] == 'R'))
-    {
-        wLen = readport(wFD, wszBuf, 2);
-        //printf("recv data error  \r\n");
-    }
-}
-
 void CUartThread::WriteUart( char *strBuf, int nLen)
 {
 
     writeport(m_nFD, strBuf, nLen);
 }
 
-void CUartThread::writeUartSerial(struCseSensor *wstrbuf)
-{
-    CLOG::Log("writeUartSerial .");
 
-    wwriteport(wFD, wstrbuf, sizeof(struCseSensor));
-}
-void CUartThread::writeSerialSlot(struCseSensor *wstrBuf)
-{
-    CLOG::Log("writeUartSerial .");
-    while (w_run)
-    {
-    writeUartSerial(wstrBuf);
-    }
-}
+
