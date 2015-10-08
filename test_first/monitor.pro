@@ -24,7 +24,8 @@ SOURCES += main.cpp \
     uart/uartthread.cpp \
     tcp/tcpclient.cpp \
     email.cpp \
-    smtp.cpp
+    smtp.cpp \
+    uart/writethread.cpp
 
 HEADERS += \
     uart/uart.h \
@@ -37,6 +38,7 @@ HEADERS += \
     common/define.h \
     common/sensor.h \
     email.h \
-    smtp.h
+    smtp.h \
+    uart/writethread.h
 
 FORMS +=

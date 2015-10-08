@@ -10,7 +10,7 @@
  int openport(char *strDev)
 {
 
-     int fd = open( strDev, O_RDWR);//O_NDELAY  在读取不到数据或是写入缓冲区已满，会马上return，直到有数据或写入完成
+     int fd = open( strDev, O_NDELAY | O_RDWR);//O_NDELAY  在读取不到数据或是写入缓冲区已满，会马上return，直到有数据或写入完成
 
     // if(fd == -1)
     // {

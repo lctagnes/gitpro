@@ -10,6 +10,7 @@
 #include "configfile.h"
 #include "common/log.h"
 #include "uart/uartthread.h"
+#include "uart/writethread.h"
 #include "tcp/tcpclient.h"
 #include "common/define.h"
 #include "common/sensor.h"
@@ -66,7 +67,7 @@ private:
 private:
     CCfgFile m_cfgFile;
     CUartThread *m_pThread;
-    CUartThread *m_wpThread;
+    WriteThread *m_wpThread;
 
     CUartThread m_gsmThread;
     CTCPClient *m_pTcpClient1;

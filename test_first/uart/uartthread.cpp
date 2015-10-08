@@ -4,7 +4,7 @@
 CUartThread::CUartThread(QObject *parent)
     :QThread(parent)
 {
-    m_bRun = false;      //寮€濮嬬疆涓簍rue
+    m_bRun = false;
 }
 
 CUartThread::~CUartThread()
@@ -20,17 +20,13 @@ void CUartThread::run()
     }
 }
 
-//----------------------------------------------------------------
-//涓插彛鍒濆鍖?
 int CUartThread::Initial(char *strDev)
 {
     m_nFD = openport(strDev);
 
     if(m_nFD < 0)
     {
-
          return -1;
-
     }
 
     return m_nFD;
@@ -39,13 +35,13 @@ int CUartThread::Initial(char *strDev)
 
 void CUartThread::Stop()
 {
-    m_bRun = false;     //缃仠
+    m_bRun = false;
     closeport(m_nFD);
 }
 
 void CUartThread::Start()
 {
-    m_bRun = true;     //寮€濮?
+    m_bRun = true;
     // start thread recv data
     //this->start();
 }
@@ -98,63 +94,8 @@ void CUartThread::ReadUart()
     }
 }
 
-void CUartThread::wReadUart()
-{
-    int wLen = 0;
-    char wszBuf[8] = {0};
-
-    wLen = readport(m_nFD, wszBuf, 8);
-    if(wLen < 0)
-    {
-        CLOG::Log("Read w cmd error .");
-        return;
-    }
-    if((wszBuf[0] == 'O') && (wszBuf[1] == 'K'))
-    {
-
-        w_run = true;
-
-        if(wLen <= 0)
-        {
-            //printf("nLen <= 0,Read sensor data error .\r\n");
-            CLOG::Log("Read sensor data error .");
-            return;
-        }
-
-        printf("Read uart data success  \r\n");
-        CLOG::Log("Read uart data success .");
-
-         //put a signals that recv data from serial port
-    }
-
-    if((wszBuf[0] == 'E') && (wszBuf[1] == 'R'))
-    {
-        //wLen = readport(wFD, wszBuf, 2);
-        //printf("recv data error  \r\n");
-    }
-}
-
 void CUartThread::WriteUart( char *strBuf, int nLen)
 {
 
     writeport(m_nFD, strBuf, nLen);
-}
-
-void CUartThread::writeUartSerial(struCseSensor *wstrbuf)
-{
-    CLOG::Log("writeUartSerial .");
-
-    wwriteport(m_nFD, wstrbuf, sizeof(struCseSensor));
-}
-void CUartThread::writeSerialSlot(struCseSensor *wstrBuf)
-{
-    CLOG::Log("writeUartSerial .");
-
-    wReadUart();
-
-    while (w_run)
-    {
-        sleep(10);
-        writeUartSerial(wstrBuf);
-    }
 }

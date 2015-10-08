@@ -10,7 +10,7 @@ CMonitor::CMonitor(QObject *parent)
 
 
     m_pThread = new CUartThread;
-    m_wpThread = new CUartThread;
+    m_wpThread = new WriteThread;
 
     m_nLCDLast = 0;
     m_bConnected1 = false;
@@ -65,7 +65,7 @@ CMonitor::CMonitor(QObject *parent)
 
         // start recv thread
 
-        m_wpThread->Start();
+        m_wpThread->start();
     }
 
    // if(-1 == nFD)
@@ -262,7 +262,7 @@ void CMonitor::SendCMDToSerialPort()            //向串口发指令
 
 void CMonitor::SendTowSerialPort()            //向串口发指令
 {
-    m_wpThread->wReadUart();
+    m_wpThread->ReadUart();
 }
 
 
