@@ -47,7 +47,7 @@ public:
     QString m_strDev;
     unsigned int m_nBaud;
 
-    QString strDev_for_upper_computer;
+    QString strDev_2;
     unsigned int baud_2;
 
     // server config

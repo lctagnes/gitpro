@@ -18,10 +18,10 @@ CMonitor::CMonitor(QObject *parent)
 
     //GetLocalIP();
 
-    char * strDev = "/home/kason/Qt/test/ttyS1";
+    char * strDev = "/home/kason/mygit/gitpro/test_first/ttyS1";
     int nBaud = m_cfgFile.m_nBaud;
 
-    char * wstrDev = "/home/kason/Qt/test/ttyS2";
+    char * wstrDev = "/home/kason/mygit/gitpro/test_first/ttyS2";
     int wBaud = m_cfgFile.w_nBaud;
 
     int nFD = m_pThread->Initial(strDev);
@@ -804,7 +804,7 @@ void CMonitor::TestSendMsg()
     memset(&wSerial, 0, sizeof(struCseSensor));
     memcpy(&wSerial, &seSerial, sizeof(struCseSensor));
 
-    emit writeSerial(&wSerial);
+    emit writeSerial(&seSerial);
 
 
 

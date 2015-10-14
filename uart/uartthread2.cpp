@@ -2,10 +2,10 @@
  *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
  *
  *FileName:		uartthread2.cpp
- *Writer:		smart-skynet
- *create Date:  2015/01/01
- *Rewriter:		kason
- *Rewrite Date:	2015/10/08
+ *Writer:		kason
+ *create Date:  2015/10/08
+ *Rewriter:
+ *Rewrite Date:
  *Impact:
  *
  *Main Content(Function Name、parameters、returns)
@@ -108,7 +108,6 @@ void CUartThread2::writeSerialSlot(char *wstrBuf)
 
     if (w_run)
     {
-        sleep(10);
-        WriteUart(wstrBuf, 136);
+        WriteUart(wstrBuf, STRUCSESENSOR_LEN);
     }
 }

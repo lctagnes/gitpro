@@ -1,5 +1,5 @@
 /************************************************************
- *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
+ *Copyright (c) 2013-2015 娣卞湷甯傝禌鏌忚揪鎶�鏈湁闄愬叕鍙告妧鏈爺鍙戦儴
  *
  *FileName:		configfile.cpp
  *Writer:		smart-skynet
@@ -8,7 +8,7 @@
  *Rewrite Date:	2015/09/28
  *Impact:
  *
- *Main Content(Function Name、parameters、returns)
+ *Main Content(Function Name銆乸arameters銆乺eturns)
  *
  ************************************************************/
 
@@ -39,7 +39,7 @@ void CCfgFile::ReadFile()
     m_strDev = m_setting->value("serialport/DEV").toString().trimmed();
     m_nBaud = m_setting->value("serialport/BAUD").toInt();
 
-    strDev_for_upper_computer = m_setting->value("serialport/DEV2").toString().trimmed();
+    strDev_2 = m_setting->value("serialport/DEV2").toString().trimmed();
     baud_2 = m_setting->value("serialport/BAUD2").toInt();
 
     m_strIP = m_setting->value("server/IP").toString().trimmed();

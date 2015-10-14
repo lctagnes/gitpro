@@ -1,7 +1,7 @@
 /************************************************************
  *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
  *
- *FileName:		monitor.cpp        
+ *FileName:		monitor.cpp
  *Writer:		smart-skynet
  *create Date:  2015/01/01
  *Rewriter:		kason
@@ -23,7 +23,7 @@ CMonitor::CMonitor(QObject *parent)
     m_nGSMTimerID = startTimer(m_cfgFile.m_nSendGSM_TIME *60* 1000);    // 60 * 1000 ms
 
     m_pThread = new CUartThread;                            // uart1与采集板通信串口线程
-    CommunicateToUpperComputerpThread = new CUartThread2;    // uart2与上位机通信串口线程
+    CommunicateToUpperComputerpThread = new CUartThread2;   // uart2与上位机通信串口线程
 
     m_nLCDLast = 0;
     m_bConnected1 = false;
@@ -35,21 +35,20 @@ CMonitor::CMonitor(QObject *parent)
     int nBaud = m_cfgFile.m_nBaud;
 
     char * strDev_for_upper_computer = m_cfgFile.strDev_2.toLatin1().data();
-    int baud_2 = m_cfgFile.nBaud_2;
+    int baud_2 = m_cfgFile.baud_2;
 
     int nFD = m_pThread->Initial(strDev, nBaud);
     int uart2_fd = CommunicateToUpperComputerpThread->Initial(strDev_for_upper_computer, baud_2);
 
-    if(nFD>0)
-    {
+    //if(nFD>0)
+   // {
         printf("Open Serial Port Success .\r\n");
         CLOG::Log("Open Serial Port Success .");
 
         // start recv thread
-
         m_pThread->Start();
-        m_nTimerID = startTimer(m_cfgFile.m_nSampTime * 1000);
-    }
+       // m_nTimerID = startTimer(m_cfgFile.m_nSampTime * 1000);
+    //}
     if(-1 == nFD)
     {
         printf("Open Serial Port Failed , Exit .\r\n");
@@ -71,7 +70,6 @@ CMonitor::CMonitor(QObject *parent)
         // start recv thread
 
         m_pThread->Start();
-        m_nTimerID = startTimer(m_cfgFile.m_nSampTime * 1000);
     }
     if(-1 == uart2_fd)
     {
@@ -247,13 +245,6 @@ void CMonitor::SendCMDToSerialPort()        // 向串口发指令
     m_pThread->ReadUart();
 }
 
-/*
-void CMonitor::SendTowSerialPort()            //向串口2发指令
-{
-    m_wpThread->wReadUart();
-}
-*/
-
 void CMonitor::DecodeSerialData(char *strBuf)
 {
 
@@ -381,7 +372,7 @@ void CMonitor::DecodeSerialData(char *strBuf)
 
     //向与安卓设备通信串口发信号
     //TestSendMsg ();
-    char wSerial[136] = {0};
+    char wSerial[STRUCSESENSOR_LEN] = {0};
     memset(&wSerial, 0, sizeof(wSerial));
     memcpy(&wSerial, &seSerial, sizeof(wSerial));
 

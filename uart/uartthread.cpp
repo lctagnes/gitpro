@@ -5,7 +5,7 @@
  *Writer:		smart-skynet
  *create Date:  2015/01/01
  *Rewriter:		kason
- *Rewrite Date:	2015/09/28
+ *Rewrite Date:	2015/10/08
  *Impact:
  *
  *Main Content(Function Name、parameters、returns)

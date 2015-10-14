@@ -37,7 +37,7 @@ extern "C"
 //const int RECV_DATA_LEN = 6;
 const int RECV_DATA_LEN = 512;		// 数据位长度
 const int RECV_CMD_LEN =5;			// 命令位长度
-
+const int STRUCSESENSOR_LEN = 136;  // 传感器数据长度
 using namespace std;
 
 class CUartThread : public QThread

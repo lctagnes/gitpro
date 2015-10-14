@@ -33,6 +33,6 @@ extern int setport(int fd, int baud, int databits, int stopbits, int parity);	//
 //extern int readport(int fd, char *buf, int maxLen, int maxwaittime);			//读数据，参数为串口，BUF，长度，超时时间
 extern int readport(int fd, char *buf, int maxLen);								//读数据，参数为串口，BUF，长度
 extern int writeport(int fd, char *buf, int len);  								//发送数据 防采集
-extern void closeport(int fd);
+extern void closeport(int fd);                                                  //关闭串口
 
 #endif // UART_H
