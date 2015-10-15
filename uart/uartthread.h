@@ -98,7 +98,8 @@ signals:
 private:
     bool m_bRun;                		// 线程开始停止标志位
     bool w_run;                         // 写串口开始停止标志位
-    int m_nFD;							// 串口文件描述符
+    int  m_nFD;							// 串口文件描述符
+    int  wFD;							// 串口文件描述符
 };
 
 #endif // UARTRECVTHREAD_H

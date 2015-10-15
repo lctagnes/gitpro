@@ -117,18 +117,20 @@ void CUartThread::Start()
 }*/
 void CUartThread::ReadUart()
 {
+    printf("readuart");
     int nLen = 0;
     char szBuf[RECV_DATA_LEN] = {0};
 
     nLen = readport(m_nFD, szBuf, 5);
     if(nLen < 0)
     {
+        printf("readuart < 0");
         CLOG::Log("Read sensor cmd error .");
         return;
     }
     if((szBuf[0] == 'O') && (szBuf[1] == 'K'))
     {
-
+        printf("readuart ok");
         int nDatalen = 0;
         if(nLen >= RECV_CMD_LEN)
         {
@@ -139,7 +141,7 @@ void CUartThread::ReadUart()
 
         if(nLen <= 0)
         {
-            //printf("nLen <= 0,Read sensor data error .\r\n");
+            printf("nLen <= 0,Read sensor data error .\r\n");
             CLOG::Log("Read sensor data error .");
             return;
         }
@@ -165,7 +167,7 @@ void CUartThread::ReadUart()
 
 void CUartThread::WriteUart( char *strBuf, int nLen)
 {
-
+    printf("dev=%s",strBuf);
     writeport(m_nFD, strBuf, nLen);
 }
 

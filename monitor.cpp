@@ -31,25 +31,22 @@ CMonitor::CMonitor(QObject *parent)
 
     //    GetLocalIP();
 
-    char * strDev = m_cfgFile.m_strDev.toLatin1().data();
+    char *strDev = m_cfgFile.m_strDev.toLatin1().data();
     int nBaud = m_cfgFile.m_nBaud;
 
-    char * strDev_for_upper_computer = m_cfgFile.strDev_2.toLatin1().data();
-    int baud_2 = m_cfgFile.baud_2;
-
     int nFD = m_pThread->Initial(strDev, nBaud);
-    int uart2_fd = CommunicateToUpperComputerpThread->Initial(strDev_for_upper_computer, baud_2);
 
-    //if(nFD>0)
-   // {
+
+    if(nFD>0)
+    {
         printf("Open Serial Port Success .\r\n");
         CLOG::Log("Open Serial Port Success .");
 
         // start recv thread
         m_pThread->Start();
-       // m_nTimerID = startTimer(m_cfgFile.m_nSampTime * 1000);
-    //}
-    if(-1 == nFD)
+       m_nTimerID = startTimer(m_cfgFile.m_nSampTime * 1000);
+    }
+    else if(-1 == nFD)
     {
         printf("Open Serial Port Failed , Exit .\r\n");
         CLOG::Log("Open Serial Port Failed , Exit .");
@@ -62,6 +59,9 @@ CMonitor::CMonitor(QObject *parent)
         // exit(0);
     }
 
+    char *strDev_for_upper_computer = m_cfgFile.strDev_2.toLatin1().data();
+    int baud_2 = m_cfgFile.baud_2;
+    int uart2_fd = CommunicateToUpperComputerpThread->Initial(strDev_for_upper_computer, baud_2);
     if(uart2_fd > 0)
     {
         printf("Open Serial 2 Port Success .\r\n");
@@ -71,7 +71,7 @@ CMonitor::CMonitor(QObject *parent)
 
         m_pThread->Start();
     }
-    if(-1 == uart2_fd)
+    else if(-1 == uart2_fd)
     {
         printf("Open Serial 2 Port Failed , Exit .\r\n");
         CLOG::Log("Open Serial 2 Port Failed , Exit .");
@@ -242,6 +242,7 @@ void CMonitor::SendCMDToSerialPort()        // 向串口发指令
     CLOG::Log("Send read cmd .");
 
     sleep(10);
+    printf("sleep(10)");
     m_pThread->ReadUart();
 }
 
@@ -730,7 +731,7 @@ void CMonitor::ConnectedSlot()
     connect(m_pTcpClient2, SIGNAL(sRecvTCPMsg(QByteArray &)), this, SLOT(RecvTCPMsgSlot(QByteArray &)));
 }
 
-void CMonitor::TestSendMsg()
+/*void CMonitor::TestSendMsg()
 {
 
     m_bConnected2 = true;
@@ -772,6 +773,12 @@ void CMonitor::TestSendMsg()
     seSerial.fan_speed15 =32;
     seSerial.fan_speed16 =33;
     seSerial.status =1;
+
+    char wSerial[STRUCSESENSOR_LEN] = {0};
+    memset(&wSerial, 0, sizeof(wSerial));
+    memcpy(&wSerial, &seSerial, sizeof(wSerial));
+
+    emit writeSerial(wSerial);
 
     QString strLog = QString( "%1,%2")
             .arg(seSerial.acc).arg(seSerial.bck);
@@ -820,7 +827,7 @@ void CMonitor::TestSendMsg()
 
     }
 }
-
+*/
 
 void CMonitor::DecodeMonitor(struCseMsg * cseMsg)
 {

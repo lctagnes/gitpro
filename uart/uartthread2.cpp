@@ -18,11 +18,12 @@ CUartThread2::CUartThread2(QObject *parent)
     :QThread(parent)
 {
     m_bRun = false;      //线程运行标志位
+    w_run = false;       //写数据标志位
 }
 
 CUartThread2::~CUartThread2()
 {
-    closeport(m_nFD);
+    closeport(wFD);
 }
 
 void CUartThread2::run()
@@ -37,11 +38,11 @@ int CUartThread2::Initial(char *strDev, int nBaud, int nByte, int nStop, char cC
 {
     int ret = 0;
 
-    m_nFD = openport(strDev);
+    wFD = openport(strDev);
 
-    if(m_nFD > 0)
+    if(wFD > 0)
     {
-        ret = setport(m_nFD, nBaud, nByte, nStop, cCheck);  //设置端口参数，波特率、数据位、停止位、校验位
+        ret = setport(wFD, nBaud, nByte, nStop, cCheck);  //设置端口参数，波特率、数据位、停止位、校验位
         if(ret < 0)
         {
             return 0;
@@ -55,13 +56,13 @@ int CUartThread2::Initial(char *strDev, int nBaud, int nByte, int nStop, char cC
         return -1;
     }
 
-    return m_nFD;
+    return wFD;
 }
 
 void CUartThread2::Stop()
 {
     m_bRun = false;     //停止
-    closeport(m_nFD);
+    closeport(wFD);
 }
 
 void CUartThread2::Start()
@@ -76,7 +77,7 @@ void CUartThread2::ReadUart()
     int Len = 0;
     char szBuf[8] = {0};
 
-    Len = readport(m_nFD, szBuf, 8);
+    Len = readport(wFD, szBuf, 8);
     if(Len < 0)
     {
         CLOG::Log("Read upper computer cmd error .");
@@ -97,7 +98,7 @@ void CUartThread2::ReadUart()
 void CUartThread2::WriteUart( char *strBuf, int nLen)
 {
 
-    writeport(m_nFD, strBuf, nLen);
+    writeport(wFD, strBuf, nLen);
 }
 
 void CUartThread2::writeSerialSlot(char *wstrBuf)

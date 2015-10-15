@@ -1,5 +1,5 @@
 /************************************************************
- *Copyright (c) 2013-2015 深圳市赛柏达技术有限公司技术研发部
+ *Copyright (c) 2013-2015 娣卞湷甯傝禌鏌忚揪鎶�鏈湁闄愬叕鍙告妧鏈爺鍙戦儴
  *
  *FileName:		main.cpp        
  *Writer:		smart-skynet
@@ -8,7 +8,7 @@
  *Rewrite Date:	2015/09/28
  *Impact:
  *
- *Main Content(Function Name、parameters、returns)
+ *Main Content(Function Name銆乸arameters銆乺eturns)
  *
  ************************************************************/
 
@@ -24,6 +24,6 @@ int main(int argc, char *argv[])
 
     CMonitor monitor;
 
-	//进入QCoreApplication事件循环
+	//杩涘叆QCoreApplication浜嬩欢寰幆
     return a.exec();			
 }

@@ -39,8 +39,8 @@ void CCfgFile::ReadFile()
     m_strDev = m_setting->value("serialport/DEV").toString().trimmed();
     m_nBaud = m_setting->value("serialport/BAUD").toInt();
 
-    strDev_2 = m_setting->value("serialport/DEV2").toString().trimmed();
-    baud_2 = m_setting->value("serialport/BAUD2").toInt();
+    strDev_2 = m_setting->value("androidport/DEV").toString().trimmed();
+    baud_2 = m_setting->value("androidport/BAUD").toInt();
 
     m_strIP = m_setting->value("server/IP").toString().trimmed();
     m_nPort = m_setting->value("server/PORT").toInt();
@@ -80,10 +80,10 @@ void CCfgFile::ReadFile()
 
 void CCfgFile::VerifyData()
 {
-    if(m_strGsmDev.isEmpty())
-    {
-        m_strDev = "/dev/ttyS1";
-    }
+//    if(m_strGsmDev.isEmpty())
+//    {
+//        m_strDev = "/dev/ttyS1";
+//    }
 
     if(0 == m_nBaud)
     {
